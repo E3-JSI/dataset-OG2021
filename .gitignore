@@ -1,0 +1,3 @@
+# ignore docker-compose files
+data/**
+postgres/**

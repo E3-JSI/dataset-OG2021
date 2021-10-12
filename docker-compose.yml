@@ -1,0 +1,30 @@
+version: "3.3"
+
+services:
+  app:
+    image: heartexlabs/label-studio:latest
+    depends_on:
+      - db
+    environment:
+      - DJANGO_DB=default
+      - POSTGRE_NAME=postgres
+      - POSTGRE_USER=postgres
+      - POSTGRE_PASSWORD=
+      - POSTGRE_PORT=5432
+      - POSTGRE_HOST=db
+    volumes:
+      - ./data/label-studio:/label-studio/data
+    ports:
+      - "8080:8080"
+
+  db:
+    image: postgres:11.5
+    hostname: db
+    restart: always
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+volumes:
+  data:
