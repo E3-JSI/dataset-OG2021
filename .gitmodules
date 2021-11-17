@@ -1,0 +1,3 @@
+[submodule "news-collector"]
+	path = news-collector
+	url = https://github.com/ErikNovak/event-registry-collector.git
