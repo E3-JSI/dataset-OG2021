@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "8080:80"
+      - "9100:80"
     depends_on:
       - app
     volumes:
@@ -14,7 +14,7 @@ services:
         type: volume
         volume:
           nocopy: true
-      - ./data/label-studio:/label-studio/data:rw
+      - ../data/label-studio:/label-studio/data:rw
       - ./nginx/${NGINX_FILE:-default.conf}:/etc/nginx/conf.d/default.conf:ro
     command: nginx -g "daemon off;"
 
@@ -36,7 +36,7 @@ services:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-}
       - LABEL_STUDIO_COPY_STATIC_DATA=true
     volumes:
-      - ./data/label-studio:/label-studio/data
+      - ../data/label-studio:/label-studio/data
       # keep in sync with deploy/docker-entrypoint.d/30-copy-static-data.sh
       - source: static
         target: /label-studio/static_volume
@@ -51,7 +51,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ${POSTGRES_DATA_DIR:-./data/postgres}:/var/lib/postgresql/data
+      - ${POSTGRES_DATA_DIR:-../data/postgres}:/var/lib/postgresql/data
 
 volumes:
   static: {}
