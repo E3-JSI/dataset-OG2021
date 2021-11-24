@@ -38,7 +38,7 @@ fi;
 # ===============================================
 
 if [[ -d "../$REPO_ENV" ]]; then
-    pip install -e ../news-collector
+    pip install -e ../data-collector
     echo "News collector initialized"
 fi;
 
@@ -52,7 +52,7 @@ if [[ -z "$ER_API_KEY" ]]; then
 else
     echo "Copying the Event Registry API Key"
     # create the .env file with the API key as the content
-    echo "API_KEY=$ER_API_KEY" > ../news-collector/.env
+    echo "API_KEY=$ER_API_KEY" > ../data-collector/.env
 fi;
 
 # ===============================================
