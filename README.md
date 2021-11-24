@@ -7,6 +7,18 @@ and cover various topics.
 The goal of this project is to create a multilingual news article corpus used
 for news stream clustering and topic classification.
 
+# Initialization
+
+To prepare the project run the following commands:
+
+```bash
+
+cd ./scripts
+# setup the project environment
+bash setup_environment.sh {event-registry-api-key}
+
+```
+
 ## News Stream Clustering
 
 The original idea of this data set is to provide a gold standard data set for
