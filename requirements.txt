@@ -1,0 +1,13 @@
+jupyterlab
+ipywidgets>=7.5
+numpy
+pandas
+matplotlib
+python-dotenv
+tqdm
+transformers
+scikit-learn
+black
+datasets
+dvc
+torch

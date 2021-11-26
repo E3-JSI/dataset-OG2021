@@ -1,3 +1,3 @@
 [submodule "data-collector"]
-	path = data-collector
+	path = services/data-collector
 	url = https://github.com/ErikNovak/event-registry-collector.git
