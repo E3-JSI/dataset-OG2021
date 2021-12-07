@@ -31,6 +31,27 @@ pip install torch==1.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_
 pip install pytorch-lightning
 ```
 
+## Get Data
+
+To get the data, first ask the project admin to generate a new
+user on the machine where the data is stored.
+
+Next, run the following two commands:
+
+```bash
+# locally store the username provided by the admin
+dvc remote modify --local ssh-storage user {username}
+# locally store the password provided by the admin
+dvc remote modify --local ssh-storage password {password}
+```
+
+Finally, run the command:
+
+```bash
+# pulls the data from the remote location
+dvc pull
+```
+
 # Description
 
 ## News Stream Clustering

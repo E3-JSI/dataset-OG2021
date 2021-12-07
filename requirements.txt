@@ -9,4 +9,4 @@ transformers
 scikit-learn
 black
 datasets
-dvc
+dvc[ssh]
