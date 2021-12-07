@@ -37,6 +37,15 @@ else
 fi;
 
 # ===============================================
+# Setup the project repository
+# ===============================================
+
+if [[ -d "../$REPO_ENV" ]]; then
+    pip install -e ..
+    echo "Project repository initialized"
+fi;
+
+# ===============================================
 # Setup the news collector
 # ===============================================
 

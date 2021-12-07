@@ -15,9 +15,23 @@ To prepare the project run the following commands:
 
 cd ./scripts
 # setup the project environment
+# NOTE: the event registry API key is required
+#       only for collecting news articles
 bash setup_environment.sh {event-registry-api-key}
-
 ```
+
+## Install Pytorch and Pytorch-Lightning
+
+```bash
+# activate the project environment
+. ./venv/bin/activate
+# install pytorch
+pip install torch==1.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+# install pytorch lightning
+pip install pytorch-lightning
+```
+
+# Description
 
 ## News Stream Clustering
 
