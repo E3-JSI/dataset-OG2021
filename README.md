@@ -12,8 +12,9 @@ for news stream clustering and topic classification.
 To prepare the project run the following commands:
 
 ```bash
-
+# move into the scripts folder
 cd ./scripts
+
 # setup the project environment
 # NOTE: the event registry API key is required
 #       only for collecting news articles
@@ -25,77 +26,40 @@ bash setup_environment.sh {event-registry-api-key}
 ```bash
 # activate the project environment
 . ./venv/bin/activate
+
 # install pytorch
 pip install torch==1.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+
 # install pytorch lightning
 pip install pytorch-lightning
 ```
 
-## Get Data
+## Get Data with DVC
 
-To get the data, first ask the project admin to generate a new
-user on the machine where the data is stored.
+In this project we use [DVC][dvc] for tracking the changes done to the data sets.
+To get the data for the project do the following:
 
-Next, run the following two commands:
+1. Ask the project admin to generate a new user on the machine where the data
+   is stored.
 
-```bash
-# locally store the username provided by the admin
-dvc remote modify --local ssh-storage user {username}
-# locally store the password provided by the admin
-dvc remote modify --local ssh-storage password {password}
-```
+2. Next, run the following two commands:
 
-Finally, run the command:
+   ```bash
+   # locally store the username provided by the admin
+   dvc remote modify --local ssh-storage user {username}
 
-```bash
-# pulls the data from the remote location
-dvc pull
-```
+   # locally store the password provided by the admin
+   dvc remote modify --local ssh-storage password {password}
+   ```
 
-# Description
+3. Finally, run the command:
 
-## News Stream Clustering
+   ```bash
+   # pulls the data from the remote location
+   dvc pull
+   ```
 
-The original idea of this data set is to provide a gold standard data set for
-benchmarking news stream clustering algorithms. To each article an event ID is
-assigned; articles with the same event ID are describing the same event.
+This will create a new folder `/data` which will contain all of the data
+for the project.
 
-### Cluster labelling process
-
-The labelling process is performed using data from Event Registry. The system
-generates event clusters using machine learning. However, these clusters are not
-of the best quality since it does not find all of the articles that are about the
-same event due to the linguistic differences and machine learning errors. Hence,
-we would refine the clusters using two tasks which can be performed in parallel.
-
-1. **Event Cluster Cleanup.** In this task, the event clusters would be cleaned
-   by identifying the articles that have a higher probability of not matching
-   with the rest of the articles in the cluster (we name them **Possible Rogue Articles**).
-   We then take the event representative article and the Possible Rogue Articles
-   and ask the user to confirm if the article is rogue or not. Using the labels
-   we would then run a script that would remove the Rogue Articles from the events.
-
-2. **Event Cluster Merge.** This task focuses on merging multiple event clusters
-   into a single one. We would first identify potential cluster merges (which
-   were not merged due to various differences). The user is then given the
-   representative articles of both event clusters with the task of identifying
-   if the articles are about the same event. If yes, the events are merged.
-   Otherwise, no changes are done.
-
-## Topic Classification
-
-The article clusters were additionally labeled with topics:
-
-> TODO: Update topics
-
-- POLITICS
-- SPORTS
-- CULTURE
-- BUSINESS
-- TECH
-- LIFESTYLE
-- ENTERTAINMENT
-
-### Topic labelling process
-
-> TODO: Update topics
+[dvc]: https://dvc.org/
