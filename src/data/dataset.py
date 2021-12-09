@@ -1,7 +1,7 @@
 import os
 import json
 import pathlib
-from typing import List
+from datetime import datetime
 
 # static data location
 
@@ -22,9 +22,17 @@ def load_dataset(fpath: str = RAW_DATA_PATH):
     for file in os.listdir(fpath):
         filepath = os.path.join(fpath, file)
         if os.path.isfile(filepath):
+            [concepts, date_start, date_end] = file.split(".")[0].split("-")
+            add_attrs = {
+                "concepts": concepts.split("&"),
+                "date_start": datetime.strptime(date_start, "%Y%m%d"),
+                "date_end": datetime.strptime(date_end, "%Y%m%d"),
+            }
             # open the file and retrieve all of the article metadata
             with open(filepath, mode="r", encoding="utf8") as file:
-                articles = articles + [json.loads(line) for line in file.readlines()]
+                articles = articles + [
+                    {**json.loads(line), **add_attrs} for line in file.readlines()
+                ]
         else:
             # append the directory articles
             articles = articles + load_dataset(filepath)

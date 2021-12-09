@@ -18,23 +18,28 @@ cd ./scripts
 # setup the project environment
 # NOTE: the event registry API key is required
 #       only for collecting news articles
-bash setup_environment.sh {event-registry-api-key}
+bash -i setup_environment.sh {event-registry-api-key}
 ```
+
+The above command will create a new conda environment called `worldnews`,
+and install all dependencies written in `requirements.txt`.
 
 ## Install Pytorch and Pytorch-Lightning
 
 ```bash
 # activate the project environment
-. ./venv/bin/activate
+conda activate worldnews
 
 # install pytorch
-pip install torch==1.10.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+conda install pytorch cudatoolkit=11.3 -c pytorch
 
 # install pytorch lightning
-pip install pytorch-lightning
+conda install pytorch-lightning -c conda-forge
 ```
 
-## Get Data with DVC
+## Get Data
+
+### Get collected data via DVC
 
 In this project we use [DVC][dvc] for tracking the changes done to the data sets.
 To get the data for the project do the following:
@@ -61,5 +66,21 @@ To get the data for the project do the following:
 
 This will create a new folder `/data` which will contain all of the data
 for the project.
+
+### Collect the data via Event Registry API
+
+To collect the data via the Event Registry API, follow the next steps:
+
+- **Initialize data-collector.** This step should be performed during the
+  initialization step.
+- **Run the data-collector.** Execute the following commands in the terminal
+  ```bash
+  # move into the scripts folder
+  cd ./scripts
+  # start the news collector
+  bash -i run_news_collector.sh
+  ```
+
+The data should be collected and stored in the `/data` folder.
 
 [dvc]: https://dvc.org/

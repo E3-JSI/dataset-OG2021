@@ -16,43 +16,52 @@ fi;
 git submodule update --remote --merge
 
 # ===============================================
-# Prepare python environment
+# Prepare conda environment
 # ===============================================
 
-# check if python is available
-if [[ $(which python) == "" ]]; then
-    echo "Python not installed on this machine"
+# check if conda is available
+if [[ $(which conda) == "" ]]; then
+    echo "Conda not installed on this machine"
     exit
 fi;
 
+# # check if the repository environment is initialized
+# REPO_ENV="venv"
+# if [[ -d "../$REPO_ENV" ]]; then
+#     echo "Python environment '$REPO_ENV' already initialized"
+# else
+#     # create a new virtual environment with the installed python
+#     python -m venv ../venv
+#     # activate the environment
+#     . ../venv/bin/activate
+# fi;
+
 # check if the repository environment is initialized
-REPO_ENV="venv"
-if [[ -d "../$REPO_ENV" ]]; then
+REPO_ENV="worldnews"
+ENVS=$(conda env list | awk '{print $1}')
+
+if [[ $ENVS = *"$REPO_ENV"* ]]; then
     echo "Python environment '$REPO_ENV' already initialized"
 else
     # create a new virtual environment with the installed python
-    python -m venv ../venv
-    # activate the environment
-    . ../venv/bin/activate
+    conda create --name "$REPO_ENV" python=3.8 pip --yes
 fi;
+
+conda activate $REPO_ENV
 
 # ===============================================
 # Setup the project repository
 # ===============================================
 
-if [[ -d "../$REPO_ENV" ]]; then
-    pip install -e ..
-    echo "Project repository initialized"
-fi;
+pip install -e ..
+echo "Project repository initialized"
 
 # ===============================================
 # Setup the news collector
 # ===============================================
 
-if [[ -d "../$REPO_ENV" ]]; then
-    pip install -e ../services/data-collector
-    echo "News collector initialized"
-fi;
+pip install -e ../services/data-collector
+echo "News collector initialized"
 
 # ===============================================
 # Prepare collector environment variables

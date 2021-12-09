@@ -4,26 +4,28 @@
 trap "exit" INT
 
 # ===============================================
-# Check for python
+# Check for conda
 # ===============================================
 
 # check if conda is available
-if [[ $(which python) == "" ]]; then
-    echo "Python not installed on this machine"
+if [[ $(which conda) == "" ]]; then
+    echo "Conda not installed on this machine"
     exit
 fi;
 
 # ===============================================
-# Prepare python environment
+# Prepare project environment
 # ===============================================
 
 # set repository environment
-REPO_ENV="venv"
-if [[ -d "../$REPO_ENV" ]]; then
+REPO_ENV="worldnews"
+ENVS=$(conda env list | awk '{print $1}')
+
+if [[ $ENVS = *"$REPO_ENV"* ]]; then
     # activate the environment
-    . ../venv/bin/activate
+    conda activate "$REPO_ENV"
 else
-    echo "Python environment not setup. Please run 'setup_environment.sh' script"
+    echo "Project environment not setup. Please run 'setup_environment.sh' script"
     exit
 fi;
 
