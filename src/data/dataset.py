@@ -9,6 +9,25 @@ RAW_DATA_PATH = os.path.join(
     pathlib.Path(__file__).parent.parent.parent.absolute(), "data/raw"
 )
 
+DATE_FORMAT = "%Y-%m-%d"
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+
+
+def format_article(article):
+
+    return {
+        **article,
+        "date": datetime.strptime(article["date"], DATE_FORMAT)
+        if article["date"]
+        else None,
+        "dateTime": datetime.strptime(article["dateTime"], DATETIME_FORMAT)
+        if article["dateTime"]
+        else None,
+        "dateTimePub": datetime.strptime(article["dateTimePub"], DATETIME_FORMAT)
+        if article["dateTimePub"]
+        else None,
+    }
+
 
 def load_dataset(fpath: str = RAW_DATA_PATH):
     """Get all of the articles in a single array
@@ -22,16 +41,15 @@ def load_dataset(fpath: str = RAW_DATA_PATH):
     for file in os.listdir(fpath):
         filepath = os.path.join(fpath, file)
         if os.path.isfile(filepath):
-            [concepts, date_start, date_end] = file.split(".")[0].split("-")
+            [concepts, _, _] = file.split(".")[0].split("-")
             add_attrs = {
                 "concepts": concepts.split("&"),
-                "date_start": datetime.strptime(date_start, "%Y%m%d"),
-                "date_end": datetime.strptime(date_end, "%Y%m%d"),
             }
             # open the file and retrieve all of the article metadata
             with open(filepath, mode="r", encoding="utf8") as file:
                 articles = articles + [
-                    {**json.loads(line), **add_attrs} for line in file.readlines()
+                    {**format_article(json.loads(line)), **add_attrs}
+                    for line in file.readlines()
                 ]
         else:
             # append the directory articles
