@@ -31,6 +31,7 @@ and install all dependencies written in `requirements.txt`.
 conda activate worldnews
 
 # install pytorch
+conda install pytorch cudatoolkit=11.3 -c pytorch
 conda activate worldnews
 
 # install pytorch lightning
