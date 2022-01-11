@@ -32,7 +32,6 @@ conda activate worldnews
 
 # install pytorch
 conda install pytorch cudatoolkit=11.3 -c pytorch
-conda activate worldnews
 
 # install pytorch lightning
 conda install pytorch-lightning -c conda-forge
