@@ -36,6 +36,7 @@ def load_dataset(fpath: str = RAW_DATA_PATH):
         fpath (str): The directory path from which we wish to collect the data.
     """
 
+
     articles = []
     # iterate through all of the files and folders
     for file in os.listdir(fpath):
@@ -57,3 +58,4 @@ def load_dataset(fpath: str = RAW_DATA_PATH):
 
     # return the articles
     return articles
+   
