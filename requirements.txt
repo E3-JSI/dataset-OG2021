@@ -1,4 +1,5 @@
 jupyterlab
+notebook
 ipywidgets>=7.5
 numpy
 pandas
