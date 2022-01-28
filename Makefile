@@ -30,14 +30,16 @@ run-data-collection:
 # install pytorch in the experiment environment
 pytorch: setup
 	conda install -n $(REPO_NAME) pytorch torchvision torchaudio cpuonly -c pytorch --yes
+	conda install -n $(REPO_NAME) pytorch-lightning torchmetrics=0.6.2 -c conda-forge --yes
 
 # install pytorch in the experiment environment (with CUDA)
 pytorch-cuda: setup
 	conda install -n $(REPO_NAME) pytorch torchvision torchaudio cudatoolkit=$(CUDA_VERSION) -c pytorch -c nvidia --yes
+	conda install -n $(REPO_NAME) pytorch-lightning torchmetrics=0.6.2 -c conda-forge --yes
 
 # install jupyter extensions configurator
 jupyter: setup
-	conda install -n $(REPO_NAME) jupyter_nbextensions_configurator -c conda-forge --yes
+	conda install -n $(REPO_NAME) jupyter_nbextensions_configurator jupyterlab_execute_time -c conda-forge --yes
 
 # clean the project
 clean:
