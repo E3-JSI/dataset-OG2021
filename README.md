@@ -12,13 +12,7 @@ for news stream clustering and topic classification.
 To prepare the project run the following commands:
 
 ```bash
-# move into the scripts folder
-cd ./scripts
-
-# setup the project environment
-# NOTE: the event registry API key is required
-#       only for collecting news articles
-bash -i setup_environment.sh {event-registry-api-key}
+make setup
 ```
 
 The above command will create a new conda environment called `worldnews`,
@@ -27,14 +21,7 @@ and install all dependencies written in `requirements.txt`.
 ## Install Pytorch and Pytorch-Lightning
 
 ```bash
-# activate the project environment
-conda activate worldnews
-
-# install pytorch
-conda install pytorch cudatoolkit=11.3 -c pytorch
-
-# install pytorch lightning
-conda install pytorch-lightning -c conda-forge
+make pytorch
 ```
 
 ## Get Data
