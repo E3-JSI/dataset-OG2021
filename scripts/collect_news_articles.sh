@@ -25,7 +25,7 @@ if [[ $ENVS = *"$REPO_ENV"* ]]; then
     # activate the environment
     conda activate "$REPO_ENV"
 else
-    echo "Project environment not setup. Please run 'setup_environment.sh' script"
+    echo "Project environment not setup. Please create the environment"
     exit
 fi;
 
@@ -58,20 +58,20 @@ declare -a LANGUAGES=(
 # TODO: prepare a list of query options to retrieve the data from
 # QUERY FORMAT: date-start;date-end;comma-separated-concepts
 declare -a QUERIES=(
-    "2021-10-01;2021-11-29;pandora papers"
-    "2020-01-01;2021-11-29;panama papers"
-    "2020-01-01;2021-11-29;global chip shortage"
-    "2021-03-22;2021-11-29;ever given,suez canal"
+    "2021-10-01;2021-12-31;pandora papers"
+    "2020-01-01;2021-12-31;panama papers"
+    "2020-01-01;2021-12-31;global chip shortage"
+    "2021-03-22;2021-12-31;ever given,suez canal"
 
-    "2020-01-01;2021-11-29;presidency of the council of the european union"
-    "2020-01-01;2021-11-29;european migrant crisis"
-    "2020-01-01;2021-11-29;hong kong,demonstration"
+    "2020-01-01;2021-12-31;presidency of the council of the european union"
+    "2020-01-01;2021-12-31;european migrant crisis"
+    "2020-01-01;2021-12-31;hong kong,demonstration"
 
-    "2020-01-01;2021-11-29;association football,premier league"
-    "2020-01-01;2021-11-29;association football,bundesliga"
-    "2020-01-01;2021-11-29;association football,la liga"
+    "2020-01-01;2021-12-31;association football,premier league"
+    "2020-01-01;2021-12-31;association football,bundesliga"
+    "2020-01-01;2021-12-31;association football,la liga"
     "2020-08-01;2021-05-31;association football,UEFA europa league"
-    "2021-08-01;2021-11-29;association football,UEFA europa league"
+    "2021-08-01;2021-12-31;association football,UEFA europa league"
     "2020-06-01;2020-07-31;association football,uefa european championship"
 
     "2021-07-01;2021-08-20;olympic games,japan,basketball"
@@ -89,12 +89,21 @@ declare -a QUERIES=(
 
     "2020-01-01;2020-06-01;kobe bryant,helicopter"
 
-    "2020-01-01;2021-11-29;basketball,nba"
+    "2020-01-01;2021-12-31;basketball,nba"
 
-    "2020-01-01;2021-11-29;me too movement"
-    "2020-01-01;2021-11-29;black lives matter"
+    "2020-01-01;2021-12-31;me too movement"
+    "2020-01-01;2021-12-31;black lives matter"
 
-    "2020-01-01;2021-11-29;volcano,types of volcanic eruptions"
+    "2020-01-01;2021-12-31;volcano,types of volcanic eruptions"
+
+    "2020-11-01;2021-01-04;vienna, austria, terrorism"
+    "2020-08-04;2021-01-31;beirut, lebanon, ammonium nitrate"
+    "2020-08-04;2021-01-31;united states capitol, washington, d.c., united states, riot"
+    "2020-01-01;2021-12-31;united states, kabul, afganistan, taliban, united states armed forces"
+    "2020-01-06;2021-01-31;iran, ukraine, airplane"
+    "2020-01-01;2021-12-31;earthquake, richter magnituda scale"
+    "2020-01-01;2021-12-31;eurovision song contest, rotterdam, netherlands"
+
     # TODO "climate crisis"
     # TODO "coronavirus"
 )
