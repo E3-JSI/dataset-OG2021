@@ -38,7 +38,6 @@ def load_dataset(fpath: str = DATA_PATHS["processed"], dataType="processed"):
     Args:
         fpath (str): The directory path from which we wish to collect the data.
     """
-
     articles = []
     # iterate through all of the files and folders
     for file in os.listdir(fpath):
@@ -46,7 +45,7 @@ def load_dataset(fpath: str = DATA_PATHS["processed"], dataType="processed"):
         if os.path.isfile(filepath):
             add_attrs = {}
             if dataType == "raw":
-                [concepts, _, _] = file.split(".")[0].split("-")
+                concepts = file.replace(".jsonl", "").split("-")[0]
                 add_attrs["concepts"] = concepts.split("&")
             # open the file and retrieve all of the article metadata
             with open(filepath, mode="r", encoding="utf8") as file:
@@ -56,7 +55,7 @@ def load_dataset(fpath: str = DATA_PATHS["processed"], dataType="processed"):
                 ]
         else:
             # append the directory articles
-            articles = articles + load_dataset(filepath)
+            articles = articles + load_dataset(filepath, dataType)
 
     # return the articles
     return articles
