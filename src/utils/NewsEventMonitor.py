@@ -151,10 +151,6 @@ class NewsEventMonitor:
                 # add the event to the past events
                 self.past_events.append(event)
                 # remove the event from the active events
-                print(
-                    event_id,
-                    event,
-                )
                 del self.active_events[event_id]
 
     # ==================================
@@ -176,14 +172,16 @@ class NewsEventMonitor:
     def assign_events_to_articles(self):
         """Assigns the articles associated event ID"""
         # iterate through every articles
-        for idx, event in enumerate(self.events):
+        events = self.past_events + self.active_events
+        for idx, event in enumerate(events):
             for article in event.articles:
                 article.cluster_id = idx
 
     def measure_performance(self):
         """Measures the performance of the clustering algorithm"""
         # get all of the articles in one array
-        articles = list(itertools.chain(*[event.articles for event in self.events]))
+        events = self.past_events + self.active_events
+        articles = list(itertools.chain(*[event.articles for event in events]))
 
         # get the following statistics
         # tp - number of correctly clustered-together article pairs
