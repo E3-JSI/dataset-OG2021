@@ -11,3 +11,6 @@ scikit-learn
 black
 datasets
 dvc[ssh]
+torch
+pytorch-lightning
+dvc
