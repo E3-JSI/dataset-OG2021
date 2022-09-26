@@ -79,10 +79,10 @@ To get the data for the project do the following:
 
    ```bash
    # locally store the username provided by the admin
-   dvc remote modify --local ssh-storage user {username}
+   dvc remote modify --local storage user {username}
 
    # locally store the password provided by the admin
-   dvc remote modify --local ssh-storage password {password}
+   dvc remote modify --local storage password {password}
    ```
 
 3. Finally, run the command:
@@ -121,7 +121,7 @@ To collect the data via the [Event Registry API][er], follow the next steps:
    pip install -e ./services/data-collector
 
    # copy the environment file
-   cp ./.env ./service/data-collector
+   cp ./.env ./services/data-collector
    ```
 
 4. **Collect the News Articles.** To collect the news, run the following commands:

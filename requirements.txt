@@ -10,4 +10,6 @@ transformers
 scikit-learn
 black
 datasets
+torch
+pytorch-lightning
 dvc[ssh]
