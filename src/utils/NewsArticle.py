@@ -33,7 +33,7 @@ embed_model = MultilingualLM(model_type=model_type, pooling_type=pooling_type).e
 
 # initialize NER
 checkpoint_path = f"{MODELS_PATH}/xlm-roberta-base-conll2003.ckpt"
-ner_model = MultilingualNER.load_from_checkpoint(checkpoint_path=checkpoint_path)
+#ner_model = MultilingualNER.load_from_checkpoint(checkpoint_path=checkpoint_path)
 
 # initialize Wikifier
 wikifier = Wikifier(user_key="cchuvmnmtiopyrekqoyupcmusiwtmk")
@@ -93,6 +93,7 @@ class NewsArticle:
     url: str
     uri: str
     event_id: str
+    concept: str
     cluster_id: int
     content_embedding: Optional[torch.Tensor]
     wiki_concepts: Optional[Set[str]]
@@ -108,6 +109,7 @@ class NewsArticle:
         self.url = article["url"]
         self.uri = article["uri"]
         self.event_id = article["eventUri"]
+        self.concept = article["concepts"]
 
         self.cluster_id = None
 
@@ -124,10 +126,8 @@ class NewsArticle:
         return (
             f"NewsArticle(\n  "
             f"title={self.title},\n  "
-            f"lang={self.lang},\n  "
-            f"source={self.source},\n  "
             f"time={self.time},\n  "
-            f"url={self.url},\n"
+            f"body={self.body[0:1000]},\n"
             ")"
         )
 
@@ -159,7 +159,13 @@ class NewsArticle:
     # ==================================
     # Class Methods
     # ==================================
-
+    
+    def get_text(self) -> str:
+        return self.body
+    
+    def get_dfList_row(self):
+        return [self.title, self.body, self.concept, self.get_time(), self.lang, self.event_id, self.url, self.source, self.cluster_id]
+    
     def get_content_embedding(self) -> torch.Tensor:
         """Gets the content embedding
         Returns:
@@ -176,23 +182,23 @@ class NewsArticle:
         # return the content embedding
         return self.content_embedding
 
-    def get_named_entities(self) -> Set[Tuple[str, str]]:
-        """Gets the article named entities
-        Returns:
-            named_entities (Set[Tuple[str, str]]): The set of named entity
-                tuples, where the first element of the tuple is the named
-                entity and the second is the entity type.
-        """
-        if self.named_entities:
-            # entities are already available
-            return self.named_entities
+#    def get_named_entities(self) -> Set[Tuple[str, str]]:
+#        """Gets the article named entities
+#        Returns:
+#            named_entities (Set[Tuple[str, str]]): The set of named entity
+#                tuples, where the first element of the tuple is the named
+#                entity and the second is the entity type.
+#        """
+#        if self.named_entities:
+#            # entities are already available
+#            return self.named_entities
 
-        # prepare the content text
-        content = f"{self.title} {self.body}"
-        # get the articles named entities
-        self.named_entities = ner_model(content)
-        self.named_entities = set(self.named_entities)
-        return self.named_entities
+#        # prepare the content text
+#        content = f"{self.title} {self.body}"
+#        # get the articles named entities
+#        self.named_entities = ner_model(content)
+#        self.named_entities = set(self.named_entities)
+#        return self.named_entities
 
     def get_wiki_concepts(self):
         """Gets the article wikipedia concepts

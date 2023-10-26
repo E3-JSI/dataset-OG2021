@@ -29,7 +29,7 @@ class NewsEvent:
 
         # update the event properties
         self._init_centroid()
-        self._init_named_entities()
+        #self._init_named_entities()
         # self._init_wiki_concepts()
         self._init_time_interval()
 
@@ -51,7 +51,7 @@ class NewsEvent:
 
         # update the event values
         self._update_centroid()
-        self._update_named_entities()
+        #self._update_named_entities()   # To si zakomentiral
         # self._update_wiki_concepts()
         self._update_time_interval()
 
