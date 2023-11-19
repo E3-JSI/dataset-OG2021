@@ -1,5 +1,6 @@
 import os
 import json
+from tqdm import tqdm
 import pathlib
 from datetime import datetime
 
@@ -40,7 +41,7 @@ def load_dataset(fpath: str = DATA_PATHS["processed"], dataType="processed"):
     """
     articles = []
     # iterate through all of the files and folders
-    for file in os.listdir(fpath):
+    for file in tqdm(os.listdir(fpath), desc="Loading files"):
         filepath = os.path.join(fpath, file)
         if os.path.isfile(filepath):
             add_attrs = {}

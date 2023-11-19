@@ -40,21 +40,25 @@ def jaccard_index(s1: set, s2: set) -> float:
 
 
 def get_intra_distances(embeds: List[torch.Tensor], centroid: torch.Tensor) -> dict:
-
     if len(embeds) < 2:
-        return {"complete": 1.0, "average": 1.0, "centroid": 1.0}
+        return {"maximum": 1.0, "average": 1.0, "centroid": 1.0, "distances": []}
 
     X = torch.cat(tuple([embed.unsqueeze(0) for embed in embeds]), 0)
-    S = torch.matmul(X, X.T)
+    S = 1 - torch.matmul(X, X.T)
 
-    complete = torch.min(S)
-    average = (torch.sum(S) - S.shape[0]) / (S.shape[0] * (S.shape[1] - 1))
-    centroid = torch.sum(torch.matmul(X, centroid)) / X.shape[0]
+    # intra-cluster distance
+    maximum = torch.max(S)
+    average = torch.sum(S) / (S.shape[0] * (S.shape[1] - 1))
+
+    # centroid diameter distance
+    dists = 1 - torch.matmul(X, centroid)
+    c_dist = torch.sum(dists) / X.shape[0]
 
     return {
-        "complete": complete.item(),
+        "maximum": maximum.item(),
         "average": average.item(),
-        "centroid": centroid.item(),
+        "centroid": c_dist.item(),
+        "distances": dists.tolist(),
     }
 
 
