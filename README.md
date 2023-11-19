@@ -159,15 +159,15 @@ python scripts/02_data_concepts_split.py \
 ```bash
 python scripts/03_data_mono_clustering.py \
    --concepts_dir ./data/processed/concepts \
-   --mono_events_dir ./data/final/monolingual
+   --mono_events_dir ./data/processed/mono
 ```
 
 **Multilingual news event clustering.**
 
 ```bash
 python scripts/04_data_multi_clustering.py \
-   --mono_events_dir ./data/final/mono
-   --multi_events_dir ./data/final/multi
+   --mono_events_dir ./data/processed/mono
+   --multi_events_dir ./data/processed/multi
 ```
 
 
