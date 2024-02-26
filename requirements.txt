@@ -5,18 +5,12 @@ notebook
 # data analysis
 numpy
 pandas
-scipy
 torch
 lightning
 transformers
-scikit-learn
-datasets
-networkx
 # visuals
-matplotlib
 datachart
 # utility
-python-dotenv
 tqdm
 dvc[ssh]
 black

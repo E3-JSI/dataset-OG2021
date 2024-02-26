@@ -3,11 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as f
 
 
-# TODO: add support for multiple inputs
-
-
 class Wasserstein(nn.Module):
-    def __init__(self, reg: float = 0.1, nit: int = 500):
+    def __init__(self, reg: float = 0.1, nit: int = 500, device=torch.device("cpu")):
         """The wasserstein distance model.
 
         Args:
@@ -17,6 +14,7 @@ class Wasserstein(nn.Module):
         super(Wasserstein, self).__init__()
         self.reg = reg
         self.nit = nit
+        self.device = device
 
     def forward(
         self,
@@ -103,11 +101,13 @@ class Wasserstein(nn.Module):
         assert dist_1.shape[0] == cost_matrix.shape[0]
         assert dist_2.shape[0] == cost_matrix.shape[0]
         # prepare the initial variables
-        K = torch.exp(-cost_matrix / reg)
-        Kp = (1 / dist_1).reshape(dist_1.shape[0], -1, 1) * K
+        dist_1 = dist_1.to(self.device)
+        dist_2 = dist_2.to(self.device)
+        K = torch.exp(-cost_matrix / reg).to(self.device)
+        Kp = ((1 / dist_1).reshape(dist_1.shape[0], -1, 1) * K).to(self.device)
         # initialize the u and v tensor
-        u = torch.ones_like(dist_1)
-        v = torch.ones_like(dist_2)
+        u = torch.ones_like(dist_1).to(self.device)
+        v = torch.ones_like(dist_2).to(self.device)
         istep = 0
         while istep < nit:
             # calculate K.T * u for each example in batch
@@ -121,4 +121,4 @@ class Wasserstein(nn.Module):
         # calculate the transport matrix
         U = torch.diag_embed(u)
         V = torch.diag_embed(v)
-        return U.bmm(K).bmm(V)
+        return U.bmm(K).bmm(V).cpu()

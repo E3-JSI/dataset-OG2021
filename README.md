@@ -1,17 +1,20 @@
-# Worldnews
+# OG2021: The 2021 Olympic Games data set
 
-This repository contains the source code for creating the worldnews a data set
-containing annotated news articles for evaluating clustering algorithms. The
-articles are in different languages and cover various topics.
+This repository contains the source code for creating the 2021 Tokyo Olympic Games
+data set (OG2021), a multilingual corpus of annotated news articles used for
+evaluating clustering algorithms. The data set is a collection of 10,940 articles
+in nine languages reporting the 2021 Tokyo Olympics events.
 
-The goal of this project is to create a multilingual news article corpus used
-for news stream clustering and topic classification.
+## 📚 Publications
+
+TODO
+
 
 ## ☑️ Requirements
 
 Before starting the project make sure these requirements are available:
 
-- [python]. For setting up your research environment and python dependencies.
+- [python]. For setting up your research environment and python dependencies (Python 3.8 or higher).
 - [dvc]. For versioning your data.
 - [git]. For versioning your code.
 
@@ -20,9 +23,6 @@ Before starting the project make sure these requirements are available:
 ### Create a python environment
 
 First create the virtual environment where all the modules will be stored.
-
-#### Using venv
-
 Using the `venv` command, run the following commands:
 
 ```bash
@@ -39,24 +39,9 @@ source ./venv/bin/activate
 deactivate
 ```
 
-#### Using conda
-
-Install [conda][conda], a program for creating python virtual environments. Then run the following commands:
-
-```bash
-# create a new virtual environment
-conda create --name worldnews python=3.8 pip
-
-# activate the environment
-conda activate worldnews
-
-# deactivate the environment
-deactivate
-```
-
 ### Install
 
-To install the requirements run:
+To install the requirements, run:
 
 ```bash
 pip install -e .
@@ -91,6 +76,8 @@ To get the data for the project do the following:
 
 This will create a new folder `/data` which will contain all of the data
 for the project.
+
+
 
 ### 🔍️ Collect the data via Event Registry API (required conda environment)
 
@@ -132,6 +119,8 @@ To collect the data via the [Event Registry API], follow the next steps:
 
 The data should be collected and stored in the `/data` folder.
 
+
+
 ## 🚀 Running scripts
 
 To run the scripts follow the next steps:
@@ -157,18 +146,41 @@ python scripts/02_data_concepts_split.py \
 **Monolingual news article clustering.**
 
 ```bash
-python scripts/03_data_mono_clustering.py \
+python scripts/03_article_clustering.py \
    --concepts_dir ./data/processed/concepts \
-   --mono_events_dir ./data/processed/mono
+   --events_dir ./data/processed/mono
 ```
 
 **Multilingual news event clustering.**
 
 ```bash
-python scripts/04_data_multi_clustering.py \
+python scripts/04_cluster_merging.py \
    --mono_events_dir ./data/processed/mono
    --multi_events_dir ./data/processed/multi
 ```
+
+
+**Manual news event cleanup and evaluation.**
+
+The manual evaluation is done in the following notebooks:
+
+- Separate cluster evaluation: [01-individual-manual-evaluation.ipynb](notebooks/01-individual-manual-evaluation.ipynb)
+
+- Join the evaluated clusters:
+
+   ```bash
+   python scripts/05_data_merge.py \
+      --manual_eval_dir ./data/processed/manual_eval \
+      --merge_file_path ./data/processed/manual_join/og2021.csv
+   ```
+
+- Group cluster evaluation: [02-group-manual-evaluation.ipynb](notebooks/02-group-manual-evaluation.ipynb)
+
+- Get the evaluation statistics and visualizations: [03-final-dataset-analysis.ipynb](notebooks/03-final-dataset-analysis.ipynb)
+
+
+
+
 
 
 
@@ -183,6 +195,7 @@ Humane AI Network (grant no. 952026).
 [python]: https://www.python.org/
 [git]: https://git-scm.com/
 [dvc]: https://dvc.org/
+
 [Event Registry API]: https://eventregistry.org/
 
 [ailab]: http://ailab.ijs.si/

@@ -43,7 +43,7 @@ def main(args):
     # load the raw articles
     dataset = load_dataset(args.raw_dir, dataType="raw")
     # filter out the duplicates
-    dataset = filter(lambda x: not x["isDuplicate"], dataset)
+    dataset = list(filter(lambda x: not x["isDuplicate"], dataset))
 
     print("Dataset loaded".ljust(50, ".") + "done!")
 

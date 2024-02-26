@@ -8,7 +8,6 @@ from typing import Set, Tuple, List, Union
 # import models
 from src.models.MultilingualLM import MultilingualLM
 from src.models.MultilingualNER import MultilingualNER
-from src.utils.Wikifier import Wikifier
 
 MODELS_PATH = os.path.join(
     pathlib.Path(__file__).parent.parent.parent.absolute(), "models"
@@ -33,10 +32,6 @@ embed_model = MultilingualLM(
 
 # initialize NER
 ner_model = MultilingualNER(use_gpu=True).eval()
-
-# initialize Wikifier
-wikifier = Wikifier(user_key="cchuvmnmtiopyrekqoyupcmusiwtmk")
-
 
 # ===============================================
 # Define new Types

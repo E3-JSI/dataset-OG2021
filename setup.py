@@ -7,11 +7,11 @@ with open("requirements.txt", "r") as fh:
     requirements = fh.readlines()
 
 setup(
-    name="worldnews",
+    name="OG2021",
     version="0.1.0",
-    author="Erik Novak",
-    author_email="erik.novak@ijs.si",
-    description="Setting up the worldnews data collection and preparation",
+    author="Erik Novak, Erik Calcina",
+    author_email="erik.novak@ijs.si, erik.calcina@ijs.si",
+    description="Creating the OG2021 dataset",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
