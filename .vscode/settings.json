@@ -1,4 +1,7 @@
 {
-  "python.formatting.provider": "black",
-  "jupyter.jupyterServerType": "local"
+  "python.formatting.provider": "none",
+  "jupyter.jupyterServerType": "local",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  }
 }

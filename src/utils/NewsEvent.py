@@ -1,59 +1,46 @@
-import torch
-import torch.nn.functional as f
-
+import operator
+from functools import reduce
 from src.utils.LinearAlgebra import (
     get_intra_distances,
     get_centroid,
     update_centroid,
-    get_min,
-    get_max,
-    get_avg,
-    get_var,
 )
 
-from functools import reduce
-import operator
+from src.utils.NewsEventBase import NewsEventBase
 
 
-class NewsEvent:
-    """The class describing the event instance"""
+class NewsEvent(NewsEventBase):
+    """The class describing the monolingual event instance"""
 
-    def __init__(self, articles=[]):
+    def __init__(self, articles=[], use_ne=False):
+        super().__init__(articles)
+
         # initialize the event properties
-        self.articles = articles
+        self.use_ne = use_ne
         self.centroid = None
         self.c_norm = None
-        self.named_entities = set()
-        self.wiki_concepts = set()
         self.time_interval = None
-
         # update the event properties
         self._init_centroid()
-        #self._init_named_entities()
-        # self._init_wiki_concepts()
-        self._init_time_interval()
-
-    # ==================================
-    # Default Override Methods
-    # ==================================
-
-    def __repr__(self):
-        return f"NewsEvent(\n  " f"n_articles={len(self.articles)},\n" ")"
+        if self.use_ne:
+            self._init_named_entities()
 
     # ==================================
     # Class Methods
     # ==================================
 
     def add_article(self, article):
-
-        # append the article
-        self.articles.append(article)
+        super().add_article(article)
 
         # update the event values
         self._update_centroid()
-        #self._update_named_entities()   # To si zakomentiral
-        # self._update_wiki_concepts()
-        self._update_time_interval()
+        if self.use_ne:
+            self._update_named_entities()
+
+    def add_articles(self, articles):
+        # append the articles
+        for article in articles:
+            self.add_article(article)
 
     def get_intra_distances(self):
         a_embeds = [a.get_content_embedding() for a in self.articles]
@@ -69,8 +56,7 @@ class NewsEvent:
     def _init_centroid(self):
         if len(self.articles) == 0:
             # there are no articles
-            self.centroid = None
-            self.c_norm = None
+            self.centroid, self.c_norm = None, 0
             return
         # get the centroid and its norm
         a_embeds = [a.get_content_embedding() for a in self.articles]
@@ -84,28 +70,6 @@ class NewsEvent:
         # get the article named entities
         ne = [a.get_named_entities() for a in self.articles]
         self.named_entities = reduce(operator.or_, ne)
-
-    def _init_wiki_concepts(self):
-        if len(self.articles) == 0:
-            # there are no articles
-            self.wiki_concepts = set()
-            return
-        # get the article wikipedia concepts
-        wiki = [a.get_wiki_concepts() for a in self.articles]
-        self.wiki_concepts = reduce(operator.or_, wiki)
-
-    def _init_time_interval(self):
-        if len(self.articles) == 0:
-            # there are no articles
-            self.time_interval = None
-            return
-        # get the article times
-        times = [a.time for a in self.articles]
-        self.time_interval = {
-            "min": get_min(times),
-            "avg": get_avg(times),
-            "max": get_max(times),
-        }
 
     # ==================================
     # Update Methods
@@ -139,36 +103,3 @@ class NewsEvent:
             # append the latest named entities to the cluster
             ne = self.articles[-1].get_named_entities()
             self.named_entities = self.named_entities | ne
-
-    def _update_wiki_concepts(self):
-        if len(self.articles) == 0:
-            # there are no wikipedia concepts to extract
-            self.wiki_concepts = set()
-        elif len(self.articles) == 1:
-            # there is only one article to extract wikipedia concepts from
-            self.wiki_concepts = self.articles[0].get_wiki_concepts()
-        else:
-            # append the latest wikipedia concepts to the cluster
-            wiki = self.articles[-1].get_wiki_concepts()
-            self.wiki_concepts = self.wiki_concepts | wiki
-
-    def _update_time_interval(self):
-        if len(self.articles) != 0:
-            times = [a.time for a in self.articles]
-            self.time_interval = {
-                "min": get_min(times),
-                "avg": get_avg(times),
-                "max": get_max(times),
-            }
-
-    # ==================================
-    # Merge Methods
-    # ==================================
-
-    # TODO: implement merge methods
-
-    # ==================================
-    # Split Methods
-    # ==================================
-
-    # TODO: implement split methods

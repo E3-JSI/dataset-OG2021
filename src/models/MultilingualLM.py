@@ -5,7 +5,9 @@ from transformers import AutoModel, AutoTokenizer
 
 
 class MultilingualLM(nn.Module):
-    def __init__(self, model_type: str = "sbert", pooling_type: str = "mean"):
+    def __init__(
+        self, model_type: str = "sbert", pooling_type: str = "mean", use_gpu=False
+    ):
         """The Multilingual BERT model adapted to support multiple pooling options.
         Args:
             model_type (str): The language model used to generate the embeddings. Options:
@@ -37,17 +39,16 @@ class MultilingualLM(nn.Module):
         elif self.model_type == "xlmroberta":
             model_name = "xlm-roberta-base"
         elif self.model_type == "sbert":
-            # "sentence-transformers/quora-distilbert-multilingual"
-            # "sentence-transformers/paraphrase-xlm-r-multilingual-v1"
-            # "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-            model_name = "sentence-transformers/paraphrase-xlm-r-multilingual-v1"
+            model_name = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
         else:
             raise Exception(f"Unsupported model type: {self.model_type}")
 
         if self.pooling_type not in ["cls", "max", "mean"]:
             raise Exception(f"Unsupported pooling type: {self.pooling_type}")
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() and use_gpu else "cpu"
+        )
         self.model = AutoModel.from_pretrained(model_name).to(self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 

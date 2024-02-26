@@ -1,65 +1,47 @@
-# Worldnews
+# OG2021: The 2021 Olympic Games data set
 
-This repository contains the source code for creating the worldnews a data set
-containing annotated news articles for evaluating clustering algorithms. The
-articles are in different languages and cover various topics.
+This repository contains the source code for creating the 2021 Tokyo Olympic Games
+data set (OG2021), a multilingual corpus of annotated news articles used for
+evaluating clustering algorithms. The data set is a collection of 10,940 articles
+in nine languages reporting the 2021 Tokyo Olympics events.
 
-The goal of this project is to create a multilingual news article corpus used
-for news stream clustering and topic classification.
+## 📚 Publications
+
+TODO
+
 
 ## ☑️ Requirements
 
 Before starting the project make sure these requirements are available:
 
-- [conda][conda]. For setting up your research environment and python dependencies.
-- [dvc][dvc]. For versioning your data.
-- [git][git]. For versioning your code.
+- [python]. For setting up your research environment and python dependencies (Python 3.8 or higher).
+- [dvc]. For versioning your data.
+- [git]. For versioning your code.
 
 ## 🛠️ Setup
 
 ### Create a python environment
 
 First create the virtual environment where all the modules will be stored.
-
-#### Using virtualenv
-
-Using the `virtualenv` command, run the following commands:
+Using the `venv` command, run the following commands:
 
 ```bash
-# install the virtual env command
-pip install virtualenv
-
 # create a new virtual environment
-virtualenv -p python ./.venv
+python -m venv venv
 
 # activate the environment (UNIX)
-./.venv/bin/activate
+source ./venv/bin/activate
 
 # activate the environment (WINDOWS)
-./.venv/Scripts/activate
+./venv/Scripts/activate
 
 # deactivate the environment (UNIX & WINDOWS)
 deactivate
 ```
 
-#### Using conda
-
-Install [conda][conda], a program for creating python virtual environments. Then run the following commands:
-
-```bash
-# create a new virtual environment
-conda create --name worldnews python=3.8 pip
-
-# activate the environment
-conda activate worldnews
-
-# deactivate the environment
-deactivate
-```
-
 ### Install
 
-To install the requirements run:
+To install the requirements, run:
 
 ```bash
 pip install -e .
@@ -95,9 +77,11 @@ To get the data for the project do the following:
 This will create a new folder `/data` which will contain all of the data
 for the project.
 
+
+
 ### 🔍️ Collect the data via Event Registry API (required conda environment)
 
-To collect the data via the [Event Registry API][er], follow the next steps:
+To collect the data via the [Event Registry API], follow the next steps:
 
 1. **Login into the Event Registry.** Create a user account in the Event Registry
    service and retrieve the API key that has assigned to it. The API key can be
@@ -135,6 +119,71 @@ To collect the data via the [Event Registry API][er], follow the next steps:
 
 The data should be collected and stored in the `/data` folder.
 
+
+
+## 🚀 Running scripts
+
+To run the scripts follow the next steps:
+
+**Data cleanup**. To prepare and cleanup the data, run the following script:
+
+```bash
+python scripts/01_data_cleanup.py \
+   --raw_dir ./data/raw \
+   --results ./data/processed/articles.jsonl
+```
+This will retrieve the raw files found in the `raw_dir` folder, clean them up and store them in the `results` file.
+
+
+**Split data into groups**. The processed `articles.jsonl` contains all of the articles together. However, each article is associated with a set of concepts used to retrieve them from Event Registry (during the news article collection step). To ensure the data clustering is as efficient as possible, we need to split the articles into groups. This is done with the following script:
+
+```bash
+python scripts/02_data_concepts_split.py \
+   --articles_dir ./data/processed \
+   --concepts_dir ./data/processed/concepts
+```
+
+**Monolingual news article clustering.**
+
+```bash
+python scripts/03_article_clustering.py \
+   --concepts_dir ./data/processed/concepts \
+   --events_dir ./data/processed/mono
+```
+
+**Multilingual news event clustering.**
+
+```bash
+python scripts/04_cluster_merging.py \
+   --mono_events_dir ./data/processed/mono
+   --multi_events_dir ./data/processed/multi
+```
+
+
+**Manual news event cleanup and evaluation.**
+
+The manual evaluation is done in the following notebooks:
+
+- Separate cluster evaluation: [01-individual-manual-evaluation.ipynb](notebooks/01-individual-manual-evaluation.ipynb)
+
+- Join the evaluated clusters:
+
+   ```bash
+   python scripts/05_data_merge.py \
+      --manual_eval_dir ./data/processed/manual_eval \
+      --merge_file_path ./data/processed/manual_join/og2021.csv
+   ```
+
+- Group cluster evaluation: [02-group-manual-evaluation.ipynb](notebooks/02-group-manual-evaluation.ipynb)
+
+- Get the evaluation statistics and visualizations: [03-final-dataset-analysis.ipynb](notebooks/03-final-dataset-analysis.ipynb)
+
+
+
+
+
+
+
 ## 📣 Acknowledgments
 
 This work is developed by [Department of Artificial Intelligence][ailab] at [Jozef Stefan Institute][ijs].
@@ -144,10 +193,10 @@ Humane AI Network (grant no. 952026).
 
 
 [python]: https://www.python.org/
-[conda]: https://www.anaconda.com/
 [git]: https://git-scm.com/
 [dvc]: https://dvc.org/
-[er]: https://eventregistry.org/
+
+[Event Registry API]: https://eventregistry.org/
 
 [ailab]: http://ailab.ijs.si/
 [ijs]: https://www.ijs.si/

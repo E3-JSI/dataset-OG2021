@@ -3,12 +3,11 @@ import re
 import torch
 import pathlib
 import datetime
-from typing import List
+from typing import Set, Tuple, List, Union
 
 # import models
-from src.models.MultilingualNER import MultilingualNER
 from src.models.MultilingualLM import MultilingualLM
-from src.utils.Wikifier import Wikifier
+from src.models.MultilingualNER import MultilingualNER
 
 MODELS_PATH = os.path.join(
     pathlib.Path(__file__).parent.parent.parent.absolute(), "models"
@@ -26,24 +25,19 @@ format_string = lambda x: re.sub(regex_whitespace, " ", x).strip()
 # Initialize Models
 # ===============================================
 
-model_type = "sbert"
-pooling_type = "mean"
 # initialize LM
-embed_model = MultilingualLM(model_type=model_type, pooling_type=pooling_type).eval()
+embed_model = MultilingualLM(
+    model_type="sbert", pooling_type="mean", use_gpu=True
+).eval()
 
 # initialize NER
-checkpoint_path = f"{MODELS_PATH}/xlm-roberta-base-conll2003.ckpt"
-#ner_model = MultilingualNER.load_from_checkpoint(checkpoint_path=checkpoint_path)
-
-# initialize Wikifier
-wikifier = Wikifier(user_key="cchuvmnmtiopyrekqoyupcmusiwtmk")
-
+ner_model = MultilingualNER(use_gpu=True).eval()
 
 # ===============================================
 # Define new Types
 # ===============================================
 
-from typing import TypedDict, Optional, Tuple, Set, List
+from typing import TypedDict, Optional, List
 
 
 class ArticleSource(TypedDict):
@@ -58,12 +52,15 @@ class Article(TypedDict):
     title: str
     body: str
     lang: str
-    source: ArticleSource
+    source: Union[ArticleSource, str]
     dateTime: str
     url: str
     uri: str
     eventUri: str
     concepts: List[str]
+    clusterId: str
+    namedEntities: Union[List[Tuple[str, str]], None]
+    wikiConcepts: Union[List[str], None]
 
 
 class ExperimentArticle(TypedDict):
@@ -93,30 +90,44 @@ class NewsArticle:
     url: str
     uri: str
     event_id: str
-    concept: str
-    cluster_id: int
+    concepts: str
+    cluster_id: str
     content_embedding: Optional[torch.Tensor]
-    wiki_concepts: Optional[Set[str]]
-    named_entities: Optional[Set[Tuple[str, str]]]
 
     # format="%Y-%m-%dT%H:%M:%SZ"
     def __init__(self, article: Article) -> None:
         self.title = format_string(article["title"])
         self.body = format_string(article["body"])
-        self.source = article["source"]["title"]
+        self.source = (
+            article["source"]["title"]
+            if isinstance(article["source"], dict)
+            else article["source"]
+        )
         self.time = article["dateTime"].timestamp()
         self.lang = article["lang"]
         self.url = article["url"]
         self.uri = article["uri"]
         self.event_id = article["eventUri"]
-        self.concept = article["concepts"]
+        self.concepts = article["concepts"]
 
-        self.cluster_id = None
+        self.cluster_id = (
+            article["clusterId"]
+            if "clusterId" in article and article["clusterId"] is not None
+            else None
+        )
 
         # representation placeholders
         self.content_embedding = None
-        self.named_entities = set()
-        self.wiki_concepts = set()
+        self.named_entities = (
+            set(article["namedEntities"])
+            if "namedEntities" in article and article["namedEntities"] is not None
+            else None
+        )
+        self.wiki_concepts = (
+            set(article["wikiConcepts"])
+            if "wikiConcepts" in article and article["wikiConcepts"] is not None
+            else None
+        )
 
     # ==================================
     # Default Override Methods
@@ -126,8 +137,11 @@ class NewsArticle:
         return (
             f"NewsArticle(\n  "
             f"title={self.title},\n  "
-            f"time={self.time},\n  "
             f"body={self.body[0:1000]},\n"
+            f"source={self.source},\n  "
+            f"time={self.time},\n  "
+            f"lang={self.lang},\n  "
+            f"url={self.url},\n  "
             ")"
         )
 
@@ -159,13 +173,26 @@ class NewsArticle:
     # ==================================
     # Class Methods
     # ==================================
-    
+
+    def to_array(self):
+        return [
+            self.title,
+            self.body,
+            self.lang,
+            self.source,
+            self.get_time(),
+            self.url,
+            self.uri,
+            self.event_id,
+            self.concepts,
+            self.cluster_id,
+            list(self.named_entities) if self.named_entities else None,
+            list(self.wiki_concepts) if self.wiki_concepts else None,
+        ]
+
     def get_text(self) -> str:
-        return self.body
-    
-    def get_dfList_row(self):
-        return [self.title, self.body, self.concept, self.get_time(), self.lang, self.event_id, self.url, self.source, self.cluster_id]
-    
+        return f"{self.title} {self.body}"
+
     def get_content_embedding(self) -> torch.Tensor:
         """Gets the content embedding
         Returns:
@@ -175,30 +202,28 @@ class NewsArticle:
             # embedding is already available
             return self.content_embedding
 
-        # prepare the content text
-        content = f"{self.title} {self.body}"
         # get the content representation
-        self.content_embedding = embed_model(content)[0]
+        self.content_embedding = embed_model(self.get_text())[0]
         # return the content embedding
         return self.content_embedding
 
-#    def get_named_entities(self) -> Set[Tuple[str, str]]:
-#        """Gets the article named entities
-#        Returns:
-#            named_entities (Set[Tuple[str, str]]): The set of named entity
-#                tuples, where the first element of the tuple is the named
-#                entity and the second is the entity type.
-#        """
-#        if self.named_entities:
-#            # entities are already available
-#            return self.named_entities
+    def get_named_entities(self) -> Set[Tuple[str, str]]:
+        """Gets the article named entities
+        Returns:
+            named_entities (Set[Tuple[str, str]]): The set of named entity
+                tuples, where the first element of the tuple is the named
+                entity and the second is the entity type.
+        """
+        if self.named_entities:
+            # entities are already available
+            return self.named_entities
 
-#        # prepare the content text
-#        content = f"{self.title} {self.body}"
-#        # get the articles named entities
-#        self.named_entities = ner_model(content)
-#        self.named_entities = set(self.named_entities)
-#        return self.named_entities
+        # get the articles named entities
+        self.named_entities = ner_model(self.get_text())
+        self.named_entities = set(
+            [(ne["word"], ne["entity_group"]) for ne in self.named_entities]
+        )
+        return self.named_entities
 
     def get_wiki_concepts(self):
         """Gets the article wikipedia concepts
@@ -217,10 +242,8 @@ class NewsArticle:
             # concepts are already available
             return self.wiki_concepts
 
-        # prepare the content text
-        content = f"{self.title} {self.body}"
         # get the wikipedia concepts from Wikifier
-        self.wiki_concepts = wikifier.wikify(content)
+        self.wiki_concepts = wikifier.wikify(self.get_text())
         self.wiki_concepts = set([get_concept_title(c) for c in self.wiki_concepts])
         return self.wiki_concepts
 

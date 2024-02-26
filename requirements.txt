@@ -1,15 +1,16 @@
+# notebook
 jupyterlab
-notebook
 ipywidgets>=7.5
+notebook
+# data analysis
 numpy
 pandas
-matplotlib
-python-dotenv
-tqdm
-transformers
-scikit-learn
-black
-datasets
 torch
-pytorch-lightning
+lightning
+transformers
+# visuals
+datachart
+# utility
+tqdm
 dvc[ssh]
+black
