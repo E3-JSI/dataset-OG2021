@@ -12,5 +12,4 @@ transformers
 datachart
 # utility
 tqdm
-dvc[ssh]
 black
