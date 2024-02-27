@@ -2,20 +2,81 @@
 
 This repository contains the source code for creating the 2021 Tokyo Olympic Games
 data set (OG2021), a multilingual corpus of annotated news articles used for
-evaluating clustering algorithms. The data set is a collection of 10,940 articles
-in nine languages reporting the 2021 Tokyo Olympics events.
+evaluating clustering algorithms. The data set is a collection of 10.940 articles
+in nine languages reporting the 2021 Tokyo Olympics events. The articles are grouped
+into 1.350 clusters.
 
-## 📚 Publications
+## 📚 Data
 
-TODO
+The data set is available on [clarin.si][clarin-si]. Specifically, there are two versions:
 
+[Public data set][data-public]. Due to legal restrictions, the public data set does not contain the body of the articles. Consider using the research data set, if you want to include the article body. The data set is behind the CC BY-NC-ND 4.0 license.
+
+[Research data set][data-research]. The research data set contains all of the article attributes, but is restricted only for research purposes. The data set is behind the Research license
+
+
+### Data Format
+
+The data is in the csv format. Each line contains one article. The columns are:
+
+- **id**: The ID of the news article.
+- **title**: The title of the article.
+- **body**: The body of the article (available only in the research data set version)
+- **lang**: The language in which the article is written. Can be one of nine values.
+- **source**: The news publisher's name.
+- **published_at**: The date and time when the article was published. The dates range between 2021-07-01 and 2021-08-14.
+- **URL**: The URL location of the news article.
+- **cluster_id**: The ID of the cluster the article is a member of.
+
+**Language(s):** English, Portuguese, Spanish, French, Russian, German, Slovenian, Arabic, Chinese
+
+## 🔎 Reference
+
+If the data set was used for your research, please provide the following reference:
+
+When using the research data set, use the following reference:
+
+```bibtex
+ @misc{11356/1921,
+ title = {The news articles reporting on the 2021 Tokyo Olympics data set {OG2021} (research)},
+ author = {Novak, Erik and Calcina, Erik and Mladeni{\'c}, Dunja and Grobelnik, Marko},
+ url = {http://hdl.handle.net/11356/1921},
+ note = {Slovenian language resource repository {CLARIN}.{SI}},
+ copyright = {{CLARIN}.{SI} Licence {ACA} {ID}-{BY}-{NC}-{INF}-{NORED} 1.0},
+ issn = {2820-4042},
+ year = {2024} }
+```
+
+
+When using the public data set, use the following reference:
+```bibtex
+ @misc{11356/1922,
+ title = {The news articles reporting on the 2021 Tokyo Olympics data set {OG2021} (public)},
+ author = {Novak, Erik and Calcina, Erik and Mladeni{\'c}, Dunja and Grobelnik, Marko},
+ url = {http://hdl.handle.net/11356/1922},
+ note = {Slovenian language resource repository {CLARIN}.{SI}},
+ copyright = {Creative Commons - Attribution-{NonCommercial}-{NoDerivatives} 4.0 International ({CC} {BY}-{NC}-{ND} 4.0)},
+ issn = {2820-4042},
+ year = {2024} }
+```
+
+
+## 📣 Acknowledgments
+
+This work is developed by [Department of Artificial Intelligence][ailab] at [Jozef Stefan Institute][ijs].
+
+This work is supported by the Slovenian Research Agency and the H2020 project
+[Humane AI Network][project] (grant no. 952026).
+
+
+<details>
+  <summary>📝 Click here to see the technical details</summary>
 
 ## ☑️ Requirements
 
 Before starting the project make sure these requirements are available:
 
 - [python]. For setting up your research environment and python dependencies (Python 3.8 or higher).
-- [dvc]. For versioning your data.
 - [git]. For versioning your code.
 
 ## 🛠️ Setup
@@ -47,39 +108,10 @@ To install the requirements, run:
 pip install -e .
 ```
 
-## 🗃️ Data
-
-### 🦉 Using DVC
-
-We use [DVC][dvc] for tracking the changes done to the data sets.
-To get the data for the project do the following:
-
-1. Ask the project admin to generate a new user on the machine where the data
-   is stored.
-
-2. Next, run the following two commands:
-
-   ```bash
-   # locally store the username provided by the admin
-   dvc remote modify --local storage user {username}
-
-   # locally store the password provided by the admin
-   dvc remote modify --local storage password {password}
-   ```
-
-3. Finally, run the command:
-
-   ```bash
-   # pulls the data from the remote location
-   dvc pull
-   ```
-
-This will create a new folder `/data` which will contain all of the data
-for the project.
+## 🗃️ Data Retrieval
 
 
-
-### 🔍️ Collect the data via Event Registry API (required conda environment)
+### 🔍️ Collect the data via Event Registry API
 
 To collect the data via the [Event Registry API], follow the next steps:
 
@@ -95,8 +127,8 @@ To collect the data via the [Event Registry API], follow the next steps:
    following commands:
 
    ```bash
-   # activate the environment (example shows the conda approach)
-   conda activate worldnews
+   # activate the environment
+   source ./venv/bin/activate
 
    # pull the git submodules
    git submodule update --remote --merge
@@ -125,7 +157,9 @@ The data should be collected and stored in the `/data` folder.
 
 To run the scripts follow the next steps:
 
-**Data cleanup**. To prepare and cleanup the data, run the following script:
+### Data cleanup
+
+To prepare and cleanup the data, run the following script:
 
 ```bash
 python scripts/01_data_cleanup.py \
@@ -135,7 +169,9 @@ python scripts/01_data_cleanup.py \
 This will retrieve the raw files found in the `raw_dir` folder, clean them up and store them in the `results` file.
 
 
-**Split data into groups**. The processed `articles.jsonl` contains all of the articles together. However, each article is associated with a set of concepts used to retrieve them from Event Registry (during the news article collection step). To ensure the data clustering is as efficient as possible, we need to split the articles into groups. This is done with the following script:
+### Split data into groups
+
+The processed `articles.jsonl` contains all of the articles together. However, each article is associated with a set of concepts used to retrieve them from Event Registry (during the news article collection step). To ensure the data clustering is as efficient as possible, we need to split the articles into groups. This is done with the following script:
 
 ```bash
 python scripts/02_data_concepts_split.py \
@@ -143,7 +179,9 @@ python scripts/02_data_concepts_split.py \
    --concepts_dir ./data/processed/concepts
 ```
 
-**Monolingual news article clustering.**
+### Monolingual news article clustering
+
+To perform monolingual clustering of the articles, run the following script:
 
 ```bash
 python scripts/03_article_clustering.py \
@@ -151,7 +189,9 @@ python scripts/03_article_clustering.py \
    --events_dir ./data/processed/mono
 ```
 
-**Multilingual news event clustering.**
+### Multilingual news event clustering
+
+To perform multilingual clustering, i.e. group clusters created in the previous step, run the following script:
 
 ```bash
 python scripts/04_cluster_merging.py \
@@ -160,43 +200,44 @@ python scripts/04_cluster_merging.py \
 ```
 
 
-**Manual news event cleanup and evaluation.**
+### Manual news event cleanup and evaluation
 
-The manual evaluation is done in the following notebooks:
+Each concept data set is manually evaluated. We defined the manual evaluation procedure in the notebook [01-individual-manual-evaluation.ipynb](notebooks/01-individual-manual-evaluation.ipynb). There, we store the evaluation results in the `manual_eval` folder.
 
-- Separate cluster evaluation: [01-individual-manual-evaluation.ipynb](notebooks/01-individual-manual-evaluation.ipynb)
+Afterwards, we join the clusters and store the result in the `manual_join` folder.
 
-- Join the evaluated clusters:
+```bash
+python scripts/05_data_merge.py \
+   --manual_eval_dir ./data/processed/manual_eval \
+   --merge_file_path ./data/processed/manual_join/og2021.csv
+```
 
-   ```bash
-   python scripts/05_data_merge.py \
-      --manual_eval_dir ./data/processed/manual_eval \
-      --merge_file_path ./data/processed/manual_join/og2021.csv
-   ```
-
-- Group cluster evaluation: [02-group-manual-evaluation.ipynb](notebooks/02-group-manual-evaluation.ipynb)
-
-- Get the evaluation statistics and visualizations: [03-final-dataset-analysis.ipynb](notebooks/03-final-dataset-analysis.ipynb)
+Since individual concept data sets might contain clusters reporting across multiple data sets, we need to manually merge them. This is done in the notebook [02-group-manual-evaluation.ipynb](notebooks/02-group-manual-evaluation.ipynb), resulting in the final data set stored in the `data/final` folder.
 
 
+### Data set statistics
+The data set statistics and visualizations are computed in the notebook [03-final-dataset-analysis.ipynb](notebooks/03-final-dataset-analysis.ipynb).
+
+
+</details>
 
 
 
-
-
-## 📣 Acknowledgments
-
-This work is developed by [Department of Artificial Intelligence][ailab] at [Jozef Stefan Institute][ijs].
-
-This work is supported by the Slovenian Research Agency and the H2020 project
-Humane AI Network (grant no. 952026).
 
 
 [python]: https://www.python.org/
 [git]: https://git-scm.com/
-[dvc]: https://dvc.org/
 
 [Event Registry API]: https://eventregistry.org/
 
+[clarin-si]: https://www.clarin.si/
+[data-public]: http://hdl.handle.net/11356/1921
+[data-research]: http://hdl.handle.net/11356/1921
+
 [ailab]: http://ailab.ijs.si/
 [ijs]: https://www.ijs.si/
+[project]: https://www.humane-ai.eu/
+
+
+[cc-by]: http://creativecommons.org/licenses/by/4.0/
+[cc-by-shield]: https://img.shields.io/badge/License-CC%20BY-lightgrey.svg

@@ -1,6 +1,0 @@
-[core]
-    remote = storage
-['remote "storage"']
-    url = ssh://burger.ijs.si/home/dvc-storage/worldnews
-    port = 22
-
