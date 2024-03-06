@@ -1,6 +1,6 @@
 # OG2021: The 2021 Olympic Games data set
 
-![10.5281/zenodo.10785671](https://zenodo.org/badge/DOI/10.5281/zenodo.10785671.svg)
+[![DOI](https://zenodo.org/badge/416290920.svg)](https://zenodo.org/doi/10.5281/zenodo.10785670)
 
 
 This repository contains the source code for creating the 2021 Tokyo Olympic Games
