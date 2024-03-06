@@ -1,5 +1,8 @@
 # OG2021: The 2021 Olympic Games data set
 
+![10.5281/zenodo.10785671](https://zenodo.org/badge/DOI/10.5281/zenodo.10785671.svg)
+
+
 This repository contains the source code for creating the 2021 Tokyo Olympic Games
 data set (OG2021), a multilingual corpus of annotated news articles used for
 evaluating clustering algorithms. The data set is a collection of 10.940 articles
